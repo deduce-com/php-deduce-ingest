@@ -6,9 +6,8 @@
 
 
 class DeduceIngest {
-    var $VERSION       = 1.0;
-    var $COLLECT_HTTP  = 'http://lore.deduce.com/p/collect';
-    var $COLLECT_HTTPS = 'https://lore.deduce.com/p/collect';
+    var $VERSION       = 1.1;
+    var $COLLECT_URL   = '//lore.deduce.com/p/collect';
     var $EVENT_URL     = 'https://event.deduce.com/p/event';  // always https
     var $VERHASH;
 
@@ -30,7 +29,7 @@ class DeduceIngest {
 
     function html($email, $opts=[]){
 
-        $opts += ['testmode' => $this->testmode, 'ssl' => true];
+        $opts += ['testmode' => $this->testmode];
         $data = ['site' => $this->site, 'vers' => $this->VERHASH];
 
         if( $opts['testmode'] ){
@@ -48,7 +47,16 @@ class DeduceIngest {
             $data['ehus2'] = hash('sha256', strtoupper($email));
         }
 
-        $opts += ['url' => $opts['ssl'] ? $this->COLLECT_HTTPS : $this->COLLECT_HTTP ];
+        if( array_key_exists('ssl', $opts) ){
+                if( $opts['ssl'] ){
+                        $opts += ['url' => "https:" . $this->COLLECT_URL ];
+                }else{
+                        $opts += ['url' => "http:"  . $this->COLLECT_URL ];
+                }
+        }else{
+                $opts += ['url' => $this->COLLECT_URL ];
+        }
+
         $url = $opts['url'];
 
         $json = json_encode($data, JSON_PRETTY_PRINT);
