@@ -1,0 +1,7 @@
+{
+    "name": "deduce-com/deduce-ingest",
+    "description": "Deduce data ingestion",
+    "require": {
+        "php": "^7.1"
+    }
+}
