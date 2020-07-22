@@ -13,16 +13,17 @@ class DeduceIngest {
 
     var $site;
     var $apikey;
+    const DEFAULT_REQUEST_TIMEOUT = 2; // default timeout in seconds
     var $timeout;
 
     static $lastt;
     static $limit = 0;
 
     function __construct($site, $apikey, $opts=[]){
-        $opts += ['timeout' => 2, 'testmode' => false];
+        $opts += ['timeout' => self::DEFAULT_REQUEST_TIMEOUT, 'testmode' => false];
         $this->site     = $site;
         $this->apikey   = $apikey;
-        $this->timeout  = $opts['timeout'] || 2;
+        $this->timeout  = $opts['timeout'];
         $this->testmode = $opts['testmode'];
         $this->VERHASH  = substr(sha1("php/$this->VERSION"), 0, 16);
     }
