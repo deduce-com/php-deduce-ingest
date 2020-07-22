@@ -62,12 +62,14 @@ class DeduceIngest {
         // hash email
         if( $this->email_valid($email) ){
             $email = trim($email);
-            $data['ehls1'] = sha1(strtolower($email));
-            $data['ehus1'] = sha1(strtoupper($email));
-            $data['ehlm5'] = md5(strtolower($email));
-            $data['ehum5'] = md5(strtoupper($email));
-            $data['ehls2'] = hash('sha256', strtolower($email));
-            $data['ehus2'] = hash('sha256', strtoupper($email));
+            $email_lower = strtolower($email);
+            $email_upper = strtoupper($email);
+            $data['ehls1'] = hash('sha1', $email_lower);
+            $data['ehus1'] = hash('sha1', $email_upper);
+            $data['ehlm5'] = hash('md5', $email_lower);
+            $data['ehum5'] = hash('md5', $email_upper);
+            $data['ehls2'] = hash('sha256', $email_lower);
+            $data['ehus2'] = hash('sha256', $email_upper);
         }
 
         return $data;
