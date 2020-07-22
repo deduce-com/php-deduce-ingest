@@ -28,8 +28,30 @@ class DeduceIngest {
         $this->VERHASH  = substr(sha1("php/$this->VERSION"), 0, 16);
     }
 
-    function html($email, $opts=[]){
+    /**
+     * @param  array $opts
+     * @return string
+     */
+    public function browsertag_url($opts=[]){
+        if( array_key_exists('ssl', $opts) ){
+            if( $opts['ssl'] ){
+                    $opts += ['url' => "https:" . $this->COLLECT_URL ];
+            }else{
+                    $opts += ['url' => "http:" . $this->COLLECT_URL ];
+            }
+        }else{
+            $opts += ['url' => $this->COLLECT_URL ];
+        }
 
+        return $opts['url'];
+    }
+
+    /**
+     * @param  $email
+     * @param  array $opts
+     * @return array
+     */
+    public function browsertag_info($email, $opts=[]){
         $opts += ['testmode' => $this->testmode];
         $data = ['site' => $this->site, 'vers' => $this->VERHASH];
 
@@ -48,17 +70,14 @@ class DeduceIngest {
             $data['ehus2'] = hash('sha256', strtoupper($email));
         }
 
-        if( array_key_exists('ssl', $opts) ){
-                if( $opts['ssl'] ){
-                        $opts += ['url' => "https:" . $this->COLLECT_URL ];
-                }else{
-                        $opts += ['url' => "http:"  . $this->COLLECT_URL ];
-                }
-        }else{
-                $opts += ['url' => $this->COLLECT_URL ];
-        }
+        return $data;
+    }
 
-        $url = $opts['url'];
+    function html($email, $opts=[]){
+
+        $data = $this->browsertag_info($email, $opts);
+
+        $url = $this->browsertag_url($opts);
 
         $json = json_encode($data, JSON_PRETTY_PRINT);
         $html = <<<EOS
