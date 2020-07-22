@@ -168,11 +168,11 @@ EOS;
                 $evt['email_provider'] = preg_split('/\@/', $email)[1];
             }
         }
-        if( $this->email_valid($evt['email_prev']) ){
+        if( array_key_exists('email_prev', $evt) && $this->email_valid($evt['email_prev']) ){
             $evt['ehls1_prev'] = sha1(strtolower(trim($evt['email_prev'])));
             unset($evt['email_prev']);
         }
-        if( $evt['cc'] ){
+        if( array_key_exists('cc', $evt) ){
             $cc = preg_replace('/[^0-9]/', '', $evt['cc']);
             $evt['ccs1'] = sha1($cc);
             unset($evt['cc']);
