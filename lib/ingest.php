@@ -99,7 +99,7 @@ EOS;
         $req = curl_init($url);
         curl_setopt($req, CURLOPT_POST, 1);
         curl_setopt($req, CURLOPT_POSTFIELDS, $json);
-        curl_setopt($req, CURLOPT_TIMEOUT, $this->timeout);
+        curl_setopt($req, CURLOPT_TIMEOUT, $opts['timeout']);
         curl_setopt($req, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($req, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         $res = curl_exec($req);
