@@ -6,7 +6,7 @@
 
 
 class DeduceIngest {
-    var $VERSION       = 1.1;
+    var $VERSION       = 1.2;
     var $COLLECT_URL   = '//lore.deduce.com/p/collect';
     var $EVENT_URL     = 'https://event.deduce.com/p/event';  // always https
     var $VERHASH;
