@@ -15,6 +15,7 @@ class DeduceIngest {
     var $apikey;
     const DEFAULT_REQUEST_TIMEOUT = 2; // default timeout in seconds
     var $timeout;
+    var $http_client;
 
     static $lastt;
     static $limit = 0;
@@ -26,6 +27,12 @@ class DeduceIngest {
         $this->timeout  = $opts['timeout'];
         $this->testmode = $opts['testmode'];
         $this->VERHASH  = substr(sha1("php/$this->VERSION"), 0, 16);
+
+        if(array_key_exists('http_client', $opts)){
+            $this->http_client = $opts['http_client'];
+        }else{
+            $this->http_client = new DeduceHTTP;
+        }
     }
 
     /**
@@ -114,32 +121,16 @@ EOS;
         $post['events'] = array_map( function($e){return $this->fixup_evt($e);}, $evts );
 
         $json = json_encode($post, JSON_UNESCAPED_SLASHES);
-        //echo $json;
 
-        // https json post
-        $req = curl_init($url);
-        curl_setopt($req, CURLOPT_POST, 1);
-        curl_setopt($req, CURLOPT_POSTFIELDS, $json);
-        curl_setopt($req, CURLOPT_TIMEOUT, $opts['timeout']);
-        curl_setopt($req, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($req, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-        $res = curl_exec($req);
+        $res = $this->http_client->json_post($url, $json, $opts['timeout']);
 
-        $err  = curl_error($req);
-        $code = curl_getinfo($req, CURLINFO_HTTP_CODE);
-        curl_close($req);
-
-        if( $res ){
-            if( $code == 200 ){
-                $this->adjust_ok();
-                return ;
-            }
+        if(is_null($res)){
+            $this->adjust_ok();
+            return ;
+        }else{
             $this->adjust_fail();
-            return "$code - $res";
+            return $res;
         }
-
-        $this->adjust_fail();
-        return "error - $err";
     }
 
     // returns error message if there's an error, nothing on success
@@ -213,4 +204,39 @@ EOS;
 
 }
 
+/**
+ * Default Means to send events over the network
+ */
+class DeduceHTTP {
+
+    /**
+     * @param string $url
+     * @param string $json
+     * @param int $timeout
+     * @return string|void
+     */
+    public function json_post($url, $json, $timeout){
+        // https json post
+        $req = curl_init($url);
+        curl_setopt($req, CURLOPT_POST, 1);
+        curl_setopt($req, CURLOPT_POSTFIELDS, $json);
+        curl_setopt($req, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($req, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($req, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        $res = curl_exec($req);
+
+        $err  = curl_error($req);
+        $code = curl_getinfo($req, CURLINFO_HTTP_CODE);
+        curl_close($req);
+
+        if( $res ){
+            if( $code == 200 ){
+                return ;
+            }
+            return "$code - $res";
+        }
+
+        return "error - $err";
+    }
+}
 
