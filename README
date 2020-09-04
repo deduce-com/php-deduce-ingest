@@ -3,7 +3,22 @@ NAME
     DeduceIngest - an interface to Deduce Ingestion
 
 SYNOPSIS
+
+    Install via composer on the commandline:
+
+      $ composer require deduce-com/deduce-ingest
+
+    Use autoload in your php code:
+
+      require __DIR__ . '/vendor/autoload.php';
+
+      use \Deduce\Ingest\DeduceIngest;
+
+    OR download and include the main file directly:
+
       require 'ingest.php';
+
+    Create and use the object:
 
       $d = new DeduceIngest( 'my site id', 'my secret api key' );
 

@@ -3,5 +3,11 @@
     "description": "Deduce data ingestion",
     "require": {
         "php": "^7.1"
+    },
+    "autoload": {
+        "classmap": [
+            "lib/"
+        ],
+        "files": ["aliases.php"]
     }
 }
